@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ESP-RS JSON Post Handler</title>
+    <style type="text/css">
+        body {
+            max-width: 50em;
+            margin: auto;
+            padding: 1em;
+            font: 1em/1.65 sans-serif;
+        }
+
+        input {
+            width: 100%;
+            height: 3em;
+            margin-bottom: 1em;
+        }
+    </style>
+</head>
+
+<body>
+    <form id="the-form" action="/post" method="post" accept-charset="utf-8">
+        <label for="lp">Light Power:</label>
+        <input type="number" id="lp" name="lp" min="0" max="1000"><br>
+        <input type="submit" value="Submit">
+    </form>
+    <p id="server-resp"></p>
+    <div class="slidecontainer">
+        <input type="range" min="1" max="1000" value="500" class="slider" id="lp-range">
+    </div>
+    <script type="text/javascript">
+
+        let theForm = document.getElementById("the-form");
+        let lprange = document.getElementById("lp-range");
+        let serverResp = document.getElementById("server-resp");
+        let url = theForm.action;
+
+        theForm.addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            let form = e.currentTarget;
+            let url = form.action;
+
+            try {
+                let entries = Object.fromEntries(new FormData(form).entries());
+                entries["lp"] = parseInt(entries["lp"]);
+                let resp = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Accept: "application/json",
+                    },
+                    body: JSON.stringify(entries),
+                });
+                serverResp.innerText = await resp.text();
+            } catch (err) {
+                console.error(err);
+            }
+        });
+
+        lprange.addEventListener('input', async (e) => {
+            e.preventDefault();
+
+            let v = this.value;
+
+            try {
+                let entries = Object();
+                entries["lp"] = parseInt(e.target.value);
+                let resp = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Accept: "application/json",
+                    },
+                    body: JSON.stringify(entries),
+                });
+                serverResp.innerText = await resp.text();
+            } catch (err) {
+                console.error(err);
+            }
+        });
+
+    </script>
+</body>
+
+</html>
