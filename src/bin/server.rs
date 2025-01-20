@@ -30,6 +30,7 @@ use serde::Deserialize;
 const SSID: &str = env!("WIFI_SSID");
 const PASSWORD: &str = env!("WIFI_PASS");
 static INDEX_HTML: &str = include_str!("../http_server_page.html");
+static FAVICON: &'static [u8; 64190] = include_bytes!("../favicon.ico");
 
 // Max payload length
 const MAX_LEN: usize = 128;
@@ -78,6 +79,10 @@ fn main() -> anyhow::Result<()> {
         req.into_ok_response()?
             .write_all(INDEX_HTML.as_bytes())
             .map(|_| ())
+    })?;
+
+    server.fn_handler("/favicon.ico", Method::Get, |req| {
+        req.into_ok_response()?.write_all(FAVICON).map(|_| ())
     })?;
 
     server.fn_handler::<anyhow::Error, _>("/post", Method::Post, move |mut req| {
