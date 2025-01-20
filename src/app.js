@@ -31,7 +31,6 @@ theForm.addEventListener("submit", async (e) => {
 lprange.addEventListener('input', async (e) => {
     e.preventDefault();
 
-    let v = this.value;
 
     try {
         let entries = Object();
