@@ -18,7 +18,7 @@ let resp = await fetch("/default", {
     }
 });
 
-console.log(resp.text())
+console.log(JSON.parse(await resp.text()))
 
 
 
@@ -97,6 +97,7 @@ theForm.addEventListener("submit", async (e) => {
             body: JSON.stringify(entries),
         });
         console.log(entries)
+        // console.log(resp.text());
         serverResp.innerText = await resp.text();
     } catch (err) {
         console.error(err);
