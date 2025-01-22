@@ -30,6 +30,8 @@ use serde::Deserialize;
 const SSID: &str = env!("WIFI_SSID");
 const PASSWORD: &str = env!("WIFI_PASS");
 static INDEX_HTML: &str = include_str!("../http_server_page.html");
+static APPJS: &str = include_str!("../app.js");
+static STYLECSS: &str = include_str!("../style.css");
 static FAVICON: &'static [u8; 64190] = include_bytes!("../favicon.ico");
 
 // Max payload length
@@ -82,7 +84,22 @@ fn main() -> anyhow::Result<()> {
     })?;
 
     server.fn_handler("/favicon.ico", Method::Get, |req| {
-        req.into_ok_response()?.write_all(FAVICON).map(|_| ())
+        // req.into_ok_response()?.write_all(FAVICON).map(|_| ())
+        req.into_response(200, None, &[("Content-Type", "image/x-icon")])?
+            .write_all(FAVICON)
+            .map(|_| ())
+    })?;
+
+    server.fn_handler("/app.js", Method::Get, |req| {
+        req.into_response(200, None, &[("Content-Type", "text/javascript")])?
+            .write_all(APPJS.as_bytes())
+            .map(|_| ())
+    })?;
+
+    server.fn_handler("/style.css", Method::Get, |req| {
+        req.into_response(200, None, &[("Content-Type", "text/css")])?
+            .write_all(STYLECSS.as_bytes())
+            .map(|_| ())
     })?;
 
     server.fn_handler::<anyhow::Error, _>("/post", Method::Post, move |mut req| {
