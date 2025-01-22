@@ -1,6 +1,6 @@
 body {
     display: flexbox;
-    max-width: 50em;
+    /* max-width: 50em; */
     margin: auto;
     text-align: center;
     /* padding: 1em; */
@@ -9,7 +9,7 @@ body {
     /* align-items: center; */
 }
 
-.latest {
+.last {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-column-gap: 10px;
@@ -47,7 +47,6 @@ p {
 } */
 
 #current-value {
-    background-color: lightgray;
     width: 200px;
     height: 100px;
     margin: 10px auto;

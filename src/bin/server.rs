@@ -185,9 +185,9 @@ fn main() -> anyhow::Result<()> {
     server.fn_handler::<anyhow::Error, _>("/default", Method::Get, |req| {
         let json = json!({
             "current": [333, 666],
-            "default-1": [228, 228],
-            "default-2": [555, 555],
-            "default-3": [777, 777],
+            "default-0": [228, 228],
+            "default-1": [555, 555],
+            "default-2": [777, 777],
         })
         .to_string();
         req.into_ok_response()?.write_all(json.as_bytes())?;
