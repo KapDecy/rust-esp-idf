@@ -4,8 +4,8 @@ async function buttonClickedHandler(e) {
     let value = e.target.value
     let data = value.split(" | ")
     let entries = {
-        "first": data[0],
-        "second": data[1]
+        "first": parseInt(data[0]),
+        "second": parseInt(data[1])
     }
     await setHzHandler(entries)
 }
@@ -24,12 +24,12 @@ async function setHzHandler(entries) {
     if (resp.ok) {
         // currentValue.innerText = "hihi"
         let data = JSON.parse(await resp.text())
-        if (data.succes == "true") {
+        if (data.success == "true") {
             setCurrentHz([data.first, data.second])
         } else {
             alert("Not succes response")
         }
-        console.log(testtext)
+        // console.log(testtext)
     } else {
         alert("Error with post request")
     };
