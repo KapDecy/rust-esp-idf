@@ -26,6 +26,7 @@ use esp_idf_svc::{
 use log::*;
 
 use serde::Deserialize;
+use serde_json::json;
 
 const SSID: &str = env!("WIFI_SSID");
 const PASSWORD: &str = env!("WIFI_PASS");
@@ -131,6 +132,19 @@ fn main() -> anyhow::Result<()> {
                 String::from_utf8_unchecked(buf)
             });
         }
+
+        Ok(())
+    })?;
+
+    server.fn_handler::<anyhow::Error, _>("/default", Method::Get, |req| {
+        let json = json!({
+            "current": [333, 666],
+            "default-1": [228, 228],
+            "default-2": [555, 555],
+            "default-3": [777, 777],
+        })
+        .to_string();
+        req.into_ok_response()?.write_all(json.as_bytes())?;
 
         Ok(())
     })?;
