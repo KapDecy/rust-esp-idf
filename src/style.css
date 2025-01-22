@@ -1,12 +1,9 @@
 body {
     display: flexbox;
-    /* max-width: 50em; */
     margin: auto;
     text-align: center;
-    /* padding: 1em; */
-    /* padding: 10%; */
     font: 1em/1.65 sans-serif;
-    /* align-items: center; */
+    /* background-image: url("RF.png"); */
 }
 
 .last {
@@ -23,14 +20,15 @@ body {
     display: block;
 }
 
-/* mode-selector {
-    background-color: red;
-} */
-
 p {
     display: flex;
     justify-content: center;
-    /* background-color: red; */
+    width: 200px;
+    height: 20px;
+    background-color: white;
+    border: 1px solid black;
+    margin: 10px auto;
+    align-items: center;
 }
 
 .submit-button {
@@ -40,16 +38,21 @@ p {
     border-radius: 100px;
 }
 
-/* input {
-    width: 100%;
-    height: 3em;
-    margin-bottom: 1em;
-} */
-
 #current-value {
     width: 200px;
     height: 100px;
-    margin: 10px auto;
-    align-items: center;
-    border: 1px solid black;
+}
+
+.secret {
+    position : fixed;
+    bottom : 0;
+    left: 0;
+}
+
+.help {
+    width: 100px;
+    height: 50px;
+    position : fixed;
+    bottom : 0;
+    right: 0;
 }

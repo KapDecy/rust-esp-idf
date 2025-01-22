@@ -51,10 +51,6 @@ function setDefaultHz(data) {
 }
 
 
-function blockUnblock() {
-    document.body.style.pointerEvents = "none"
-}
-
 
 let currentValue = document.getElementById("current-value")
 let lastValues = document.querySelectorAll('#last-values > input')
@@ -62,8 +58,10 @@ let setHzForm = document.getElementById("set-hz-form")
 let modeSelector = document.getElementById("mode-selector")
 let secondHz = document.getElementById("second-hz")
 let monoModeBox = document.getElementById("mono-mode")
+let secret = document.getElementById("secret")
+let help = document.getElementById("help")
 
-
+// Get default values
 let resp = await fetch("/default", {
     method: "GET",
     headers: {
@@ -78,10 +76,11 @@ if (resp.ok) {
     alert("Default response error")
 };
 
+// Add handler for all three buttons
 Array.prototype.map.call(lastValues, (x) => x.addEventListener("click", buttonClickedHandler))
 
 // Handler for hide/show second Hz selector
-modeSelector.addEventListener("input", async (e) => {
+modeSelector.addEventListener("input", (e) => {
     e.preventDefault()
 
     let mode = e.target.value
@@ -98,7 +97,7 @@ modeSelector.addEventListener("input", async (e) => {
     }
 })
 
-
+// Handler to set hz from ranges
 setHzForm.addEventListener("submit", async (e) => {
     e.preventDefault()
 
@@ -115,68 +114,14 @@ setHzForm.addEventListener("submit", async (e) => {
     await setHzHandler(entries)
 })
 
+secret.addEventListener("click", (e) => {
+    if (document.body.style.backgroundImage == "") {
+        document.body.style.backgroundImage = "url('RF.png')"
+    } else {
+        document.body.style.backgroundImage = ""
+    }
+})
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// theForm.addEventListener("submit", async (e) => {
-//     e.preventDefault();
-
-//     let form = e.currentTarget;
-//     let url = form.action;
-//     console.log(url)
-
-//     try {
-//         let entries = Object.fromEntries(new FormData(form).entries());
-//         console.log(entries)
-//         entries["lp"] = parseInt(entries["lp"]);
-//         let resp = await fetch("url", {
-//             method: "POST",
-//             headers: {
-//                 "Content-Type": "application/json",
-//                 Accept: "application/json",
-//             },
-//             body: JSON.stringify(entries),
-//         });
-//         console.log(entries)
-//         // console.log(resp.text());
-//         serverResp.innerText = await resp.text();
-//     } catch (err) {
-//         console.error(err);
-//     }
-// });
-
-// lprange.addEventListener('input', async (e) => {
-//     e.preventDefault();
-
-
-//     try {
-//         let entries = Object();
-//         entries["lp"] = parseInt(e.target.value);
-//         let resp = await fetch(url, {
-//             method: "POST",
-//             headers: {
-//                 "Content-Type": "application/json",
-//                 Accept: "application/json",
-//             },
-//             body: JSON.stringify(entries),
-//         });
-//         serverResp.innerText = await resp.text();
-//     } catch (err) {
-//         console.error(err);
-//     }
-// });
+help.addEventListener("click", (e) => {
+    alert("text\ntext\ntext\ntext\ntext\ntext\n")
+})
