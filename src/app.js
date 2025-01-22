@@ -22,13 +22,17 @@ async function setHzHandler(entries) {
         body: JSON.stringify(entries),
     });
     if (resp.ok) {
-        currentValue.innerText = "hihi"
-        let testtext = await resp.text()
+        // currentValue.innerText = "hihi"
+        let data = JSON.parse(await resp.text())
+        if (data.succes == "true") {
+            setCurrentHz([data.first, data.second])
+        } else {
+            alert("Not succes response")
+        }
         console.log(testtext)
     } else {
         alert("Error with post request")
     };
-    // serverResp.innerText = await resp.text();
 
     document.body.style.pointerEvents = ""
 }
@@ -60,27 +64,19 @@ let secondHz = document.getElementById("second-hz")
 let monoModeBox = document.getElementById("mono-mode")
 
 
-// let resp = await fetch("/default", {
-//     method: "GET",
-//     headers: {
-//         "Content-Type": "application/json",
-//         Accept: "application/json",
-//     }
-// })
-// if (resp.ok) {
-//     let data = JSON.parse(await resp.text())
-//     setDefaultHz(data)
-// } else {
-//     alert("Default response error")
-// };
-
-// blockUnblock()
-setDefaultHz({
-    "current": [123, 321],
-    "default-0": [1111, -1111],
-    "default-1": [2222, -2222],
-    "default-2": [3333, -3333],
+let resp = await fetch("/default", {
+    method: "GET",
+    headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+    }
 })
+if (resp.ok) {
+    let data = JSON.parse(await resp.text())
+    setDefaultHz(data)
+} else {
+    alert("Default response error")
+};
 
 Array.prototype.map.call(lastValues, (x) => x.addEventListener("click", buttonClickedHandler))
 
