@@ -3,7 +3,10 @@
 //! Go to 192.168.71.1 to test
 
 use core::convert::TryInto;
-use std::thread::{self};
+use std::{
+    net::Ipv4Addr,
+    thread::{self},
+};
 
 use embedded_svc::{
     http::{Headers, Method},
@@ -11,16 +14,22 @@ use embedded_svc::{
     wifi::{self, AccessPointConfiguration, AuthMethod},
 };
 
-use esp_idf_svc::hal::{
-    ledc::{config::TimerConfig, LedcDriver, LedcTimerDriver},
-    prelude::Peripherals,
-    units::Hertz,
-};
 use esp_idf_svc::{
     eventloop::EspSystemEventLoop,
     http::server::EspHttpServer,
+    ipv4::{Mask, RouterConfiguration, Subnet},
+    netif::NetifConfiguration,
     nvs::EspDefaultNvsPartition,
     wifi::{BlockingWifi, EspWifi},
+};
+use esp_idf_svc::{
+    hal::{
+        ledc::{config::TimerConfig, LedcDriver, LedcTimerDriver},
+        prelude::Peripherals,
+        units::Hertz,
+    },
+    netif::EspNetif,
+    wifi::WifiDriver,
 };
 
 use log::*;
@@ -74,10 +83,24 @@ fn main() -> anyhow::Result<()> {
     let sys_loop = EspSystemEventLoop::take()?;
     let nvs = EspDefaultNvsPartition::take()?;
 
-    let mut wifi = BlockingWifi::wrap(
-        EspWifi::new(peripherals.modem, sys_loop.clone(), Some(nvs))?,
-        sys_loop,
+    let espwifi = EspWifi::wrap_all(
+        WifiDriver::new(peripherals.modem, sys_loop.clone(), Some(nvs))?,
+        EspNetif::new(esp_idf_svc::netif::NetifStack::Sta)?,
+        EspNetif::new_with_conf(&NetifConfiguration {
+            ip_configuration: Some(esp_idf_svc::ipv4::Configuration::Router(
+                RouterConfiguration {
+                    subnet: Subnet {
+                        gateway: Ipv4Addr::new(192, 168, 0, 1),
+                        mask: Mask(24),
+                    },
+                    ..Default::default()
+                },
+            )),
+            ..NetifConfiguration::wifi_default_router()
+        })?,
     )?;
+
+    let mut wifi = BlockingWifi::wrap(espwifi, sys_loop)?;
 
     connect_wifi(&mut wifi)?;
 
