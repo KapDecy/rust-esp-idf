@@ -12,10 +12,10 @@ let monoModeBox = document.getElementById("mono-mode")
 
 let resp = await fetch("/default", {
     method: "GET",
-    // headers: {
-    //     "Content-Type": "application/json",
-    //     Accept: "application/json",
-    // }
+    headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+    }
 });
 
 console.log(resp)
