@@ -18,7 +18,7 @@ let resp = await fetch("/default", {
     }
 });
 
-console.log(resp)
+console.log(resp.text())
 
 
 
@@ -48,7 +48,7 @@ setHzForm.addEventListener("submit", async (e) => {
     let form = e.currentTarget
     let entries = Object()
     entries["first"] = parseInt(form.amountRange1.value);
-    
+
     if (monoModeBox.checked) {
         entries["second"] = entries["first"]
     } else {

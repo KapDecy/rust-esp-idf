@@ -151,7 +151,7 @@ fn main() -> anyhow::Result<()> {
         // error!("JSON ERROR\n{}", unsafe {
         //     String::from_utf8_unchecked(buf.clone())
         // });
-        let mut resp = req.into_ok_response()?;
+        let mut resp = req.into_response(200, None, &[("Content-Type", "application/json")])?;
 
         if let Ok(form) = serde_json::from_slice::<SetHzData>(&buf) {
             info!("{:?}", form);
