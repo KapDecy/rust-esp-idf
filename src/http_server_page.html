@@ -10,7 +10,44 @@
 </head>
 
 <body>
-    <p>Current value: 0</p>
+    <p id="current-value">00000</p>
+    <div class="latest">
+        <input type="submit" value="0">
+        <input type="submit" value="1">
+        <input type="submit" value="2">
+    </div>
+    
+    <div id="mode-selector">
+        <input type="radio" name="mode" value="mono" id="mono-mode" checked/>
+        <label for="mono-mode">Mono</label>
+        <input type="radio" name="mode" value="stereo" id="stereo-mode"/>
+        <label for="stereo-mode">Stereo</label>
+    </div>
+
+    <form id="set-hz-form" action="/set-hz" method="post" accept-charset="utf-8">
+        <div>
+            <p>First Hz value:</p>
+            <input type="range" class="hz-range" name="amountRange1" min="1" max ="1000" value="500" oninput="this.form.amountInput1.value=this.value" />
+            <input type="number" name="amountInput1" min="1" max ="1000" value="500" oninput="this.form.amountRange1.value=this.value" />
+        </div>
+        
+        <div hidden id="second-hz">
+            <p>Second Hz value:</p>
+            <input id="second-hz-range" type="range" class="hz-range" name="amountRange2" min="1" max ="1000" value="500" oninput="this.form.amountInput2.value=this.value" />
+            <input id="second-hz-input" type="number" name="amountInput2" min="1" max ="1000" value="500" oninput="this.form.amountRange2.value=this.value" />
+        </div>
+
+        <input type="submit" value="Submit" class="submit-button">
+    </form>
+
+    
+    
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <hr>
 
 
     <form id="the-form" action="/post" method="post" accept-charset="utf-8">
