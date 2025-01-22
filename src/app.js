@@ -35,8 +35,6 @@ setHzForm.addEventListener("submit", async (e) => {
     e.preventDefault()
 
     let form = e.currentTarget
-    let url = form.action
-
     let entries = Object()
     entries["first"] = parseInt(form.amountRange1.value);
     
@@ -52,7 +50,7 @@ setHzForm.addEventListener("submit", async (e) => {
 
 async function setHzHandler(entries) {
     try {
-        let resp = await fetch(url, {
+        let resp = await fetch("/set-hz", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -79,7 +77,7 @@ theForm.addEventListener("submit", async (e) => {
         let entries = Object.fromEntries(new FormData(form).entries());
         console.log(entries)
         entries["lp"] = parseInt(entries["lp"]);
-        let resp = await fetch(url, {
+        let resp = await fetch("url", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
