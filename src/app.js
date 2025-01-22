@@ -24,7 +24,7 @@ async function setHzHandler(entries) {
     if (resp.ok) {
         // currentValue.innerText = "hihi"
         let data = JSON.parse(await resp.text())
-        if (data.success == "true") {
+        if (data.success) {
             setCurrentHz([data.first, data.second])
         } else {
             alert("Not succes response")
