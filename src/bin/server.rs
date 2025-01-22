@@ -78,7 +78,7 @@ fn main() -> anyhow::Result<()> {
     )?;
     let mut led = LedcDriver::new(peripherals.ledc.channel0, led, peripherals.pins.gpio0)?;
 
-    // let (sendr, recvr) = std::sync::mpsc::channel();
+    let (sendr, recvr) = std::sync::mpsc::channel();
 
     let sys_loop = EspSystemEventLoop::take()?;
     let nvs = EspDefaultNvsPartition::take()?;
@@ -192,7 +192,7 @@ fn main() -> anyhow::Result<()> {
             resp.write_all(json_resp.as_bytes())?;
             {
                 // *dur.lock().unwrap() = form.age;
-                // sendr.send(form.lp).unwrap();
+                sendr.send(form.first).unwrap();
             }
         } else {
             // TODO: write this
@@ -229,15 +229,15 @@ fn main() -> anyhow::Result<()> {
 
     // Main task no longer needed, free up some memory
 
-    // let thread = thread::spawn(move || {
-    //     let md = led.get_max_duty();
-    //     loop {
-    //         let dur = recvr.recv().unwrap();
-    //         led.set_duty((md as f32 * (dur / 1000.)) as u32).unwrap();
-    //     }
-    // });
+    let thread = thread::spawn(move || {
+        let md = led.get_max_duty();
+        loop {
+            let dur = recvr.recv().unwrap() as f32;
+            led.set_duty((md as f32 * (dur / 1000.)) as u32).unwrap();
+        }
+    });
 
-    // core::mem::forget(thread);
+    core::mem::forget(thread);
 
     // thread.join().unwrap();
     Ok(())
