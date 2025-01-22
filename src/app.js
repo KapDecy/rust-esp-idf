@@ -10,7 +10,18 @@ let modeSelector = document.getElementById("mode-selector")
 let secondHz = document.getElementById("second-hz")
 let monoModeBox = document.getElementById("mono-mode")
 
-// function sendHzRequest(url)
+let resp = await fetch("/default", {
+    method: "GET",
+    // headers: {
+    //     "Content-Type": "application/json",
+    //     Accept: "application/json",
+    // }
+});
+
+console.log(resp)
+
+
+
 
 // Handler for hide/show second Hz selector
 modeSelector.addEventListener("input", async (e) => {
