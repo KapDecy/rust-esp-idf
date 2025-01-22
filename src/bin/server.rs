@@ -45,8 +45,9 @@ const STACK_SIZE: usize = 10240;
 const CHANNEL: u8 = 11;
 
 #[derive(Deserialize, Debug)]
-struct FormData {
-    lp: f32,
+struct SetHzData {
+    first: u64,
+    second: u64,
 }
 
 fn main() -> anyhow::Result<()> {
@@ -64,7 +65,7 @@ fn main() -> anyhow::Result<()> {
     )?;
     let mut led = LedcDriver::new(peripherals.ledc.channel0, led, peripherals.pins.gpio0)?;
 
-    let (sendr, recvr) = std::sync::mpsc::channel();
+    // let (sendr, recvr) = std::sync::mpsc::channel();
 
     let sys_loop = EspSystemEventLoop::take()?;
     let nvs = EspDefaultNvsPartition::take()?;
@@ -103,7 +104,40 @@ fn main() -> anyhow::Result<()> {
             .map(|_| ())
     })?;
 
-    server.fn_handler::<anyhow::Error, _>("/post", Method::Post, move |mut req| {
+    // server.fn_handler::<anyhow::Error, _>("/post", Method::Post, move |mut req| {
+    //     let len = req.content_len().unwrap_or(0) as usize;
+
+    //     if len > MAX_LEN {
+    //         req.into_status_response(413)?
+    //             .write_all("Request too big".as_bytes())?;
+    //         return Ok(());
+    //     }
+
+    //     let mut buf = vec![0; len];
+    //     req.read_exact(&mut buf)?;
+    //     // error!("JSON ERROR\n{}", unsafe {
+    //     //     String::from_utf8_unchecked(buf.clone())
+    //     // });
+    //     let mut resp = req.into_ok_response()?;
+
+    //     if let Ok(form) = serde_json::from_slice::<FormData>(&buf) {
+    //         info!("{:?}", form);
+    //         write!(resp, "Light power: {}", form.lp)?;
+    //         {
+    //             // *dur.lock().unwrap() = form.age;
+    //             sendr.send(form.lp).unwrap();
+    //         }
+    //     } else {
+    //         resp.write_all("JSON error".as_bytes())?;
+    //         error!("JSON ERROR\n{}", unsafe {
+    //             String::from_utf8_unchecked(buf)
+    //         });
+    //     }
+
+    //     Ok(())
+    // })?;
+
+    server.fn_handler::<anyhow::Error, _>("/set-hz", Method::Post, move |mut req| {
         let len = req.content_len().unwrap_or(0) as usize;
 
         if len > MAX_LEN {
@@ -119,14 +153,22 @@ fn main() -> anyhow::Result<()> {
         // });
         let mut resp = req.into_ok_response()?;
 
-        if let Ok(form) = serde_json::from_slice::<FormData>(&buf) {
+        if let Ok(form) = serde_json::from_slice::<SetHzData>(&buf) {
             info!("{:?}", form);
-            write!(resp, "Light power: {}", form.lp)?;
+            let json_resp = json!({
+                "success": true,
+                "first": form.first,
+                "second": form.second
+            })
+            .to_string();
+            // write!(resp, json_resp.as_bytes())?;
+            resp.write_all(json_resp.as_bytes())?;
             {
                 // *dur.lock().unwrap() = form.age;
-                sendr.send(form.lp).unwrap();
+                // sendr.send(form.lp).unwrap();
             }
         } else {
+            // TODO: write this
             resp.write_all("JSON error".as_bytes())?;
             error!("JSON ERROR\n{}", unsafe {
                 String::from_utf8_unchecked(buf)
@@ -160,15 +202,15 @@ fn main() -> anyhow::Result<()> {
 
     // Main task no longer needed, free up some memory
 
-    let thread = thread::spawn(move || {
-        let md = led.get_max_duty();
-        loop {
-            let dur = recvr.recv().unwrap();
-            led.set_duty((md as f32 * (dur / 1000.)) as u32).unwrap();
-        }
-    });
+    // let thread = thread::spawn(move || {
+    //     let md = led.get_max_duty();
+    //     loop {
+    //         let dur = recvr.recv().unwrap();
+    //         led.set_duty((md as f32 * (dur / 1000.)) as u32).unwrap();
+    //     }
+    // });
 
-    core::mem::forget(thread);
+    // core::mem::forget(thread);
 
     // thread.join().unwrap();
     Ok(())
